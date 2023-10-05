@@ -24,17 +24,21 @@ const productSchema = new Schema({
   },
   img2: {
     type: String,
-    required: true,
+    required: false,
   },
   img3: {
     type: String,
-    required: true,
+    required: false,
   },
   img4: {
     type: String,
-    required: true,
+    required: false,
   },
   price: {
+    type: Number,
+    required: true,
+  },
+  count: {
     type: Number,
     required: true,
   },
