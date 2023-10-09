@@ -14,7 +14,15 @@ const adminRouter = require("./routers/admin");
 const app = express();
 const MONGODB_LINK = process.env.MONGO_URI;
 
-// app.use(cors());
+app.use(cors());
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
 app.use(bodyParser.json());
 app.use(multer().single("img"));
 
@@ -28,11 +36,11 @@ mongoose
   .connect(MONGODB_LINK)
   .then((result) => {
     console.log("connected");
-    const server = app.listen(process.env.PORT || 5000);
-    const io = require("./socket").init(server);
-    io.on("connection", (socket) => {
-      console.log("Client connected");
-    });
+    app.listen(process.env.PORT || 5000);
+    // const io = require("./socket").init(server);
+    // io.on("connection", (socket) => {
+    //   console.log("Client connected");
+    // });
   })
   .catch((err) => {
     console.log(err);
