@@ -45,6 +45,34 @@ exports.getLogin = (req, res, next) => {
                   cart: user.cart,
                   timeOnline: String(date),
                 });
+                if (user.role === "admin") {
+                  Session.findOne({ email: email }).then((result) => {
+                    if (result) {
+                      return res
+                        .status(200)
+                        .send({
+                          ok: true,
+                          session: result._id,
+                          userId: user._id,
+                        });
+                    } else {
+                      return session.save().then((rs) => {
+                        Session.findOne({ email: email })
+                          .then((currentSession) => {
+                            res.status(200).send({
+                              ok: true,
+                              session: currentSession._id,
+                              userId: user._id,
+                            });
+                            return currentSession;
+                          })
+                          .then((rs) => {
+                            logoutTime(rs._id);
+                          });
+                      });
+                    }
+                  });
+                }
                 Session.findOne({ email: email }).then((result) => {
                   if (result) {
                     clear(result._id);
@@ -59,12 +87,11 @@ exports.getLogin = (req, res, next) => {
                           return currentSession;
                         })
                         .then((rs) => {
-                          //clear session sau 1h
                           logoutTime(rs.email);
                         });
                     });
                   } else {
-                    return session.save().then((result) => {
+                    return session.save().then((rs) => {
                       Session.findOne({ email: email })
                         .then((currentSession) => {
                           res.status(200).send({
@@ -75,8 +102,6 @@ exports.getLogin = (req, res, next) => {
                           return currentSession;
                         })
                         .then((rs) => {
-                          //clear session sau 1h
-
                           logoutTime(rs._id);
                         });
                     });
