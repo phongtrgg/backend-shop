@@ -14,7 +14,7 @@ const adminRouter = require("./routers/admin");
 const app = express();
 const MONGODB_LINK = process.env.MONGO_URI;
 
-app.use(cors());
+// app.use(cors());
 app.use(bodyParser.json());
 app.use(multer().single("img"));
 
