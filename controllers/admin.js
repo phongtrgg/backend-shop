@@ -166,10 +166,15 @@ exports.postEdit = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const id = new ObjectId(req.body.id);
-  Product.findByIdAndRemove(id).then((result) => {
-    console.log("delete-P");
-    res.status(202).send({ delete: true });
-  });
+  Product.findByIdAndRemove(id)
+    .then((result) => {
+      console.log("delete-P");
+      res.status(202).send({ delete: true });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send({ error: err });
+    });
 };
 
 exports.getUser = (req, res, next) => {

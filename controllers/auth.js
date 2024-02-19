@@ -6,13 +6,15 @@ const ObjectId = mongodb.ObjectId;
 const io = require("../socket");
 
 const logoutTime = function (id) {
+  console.log("ok");
   return setTimeout(function () {
     Session.findOne({ _id: id }).then((user) => {
       if (user) {
+        console.log("logout");
         return Session.findByIdAndRemove(user._id);
       }
     });
-  }, 360000);
+  }, 10000);
 };
 const clear = function (id) {
   Session.findOne({ _id: id }).then((user) => {
@@ -45,23 +47,19 @@ exports.getLogin = (req, res, next) => {
                   cart: user.cart,
                   timeOnline: String(date),
                 });
-
                 Session.findOne({ email: email }).then((result) => {
                   if (result) {
                     clear(result._id);
                     return session.save().then((result) => {
-                      Session.findOne({ email: email })
-                        .then((currentSession) => {
+                      Session.findOne({ email: email }).then(
+                        (currentSession) => {
                           res.status(200).send({
                             ok: true,
                             session: currentSession._id,
                             userId: user._id,
                           });
-                          return currentSession;
-                        })
-                        .then((rs) => {
-                          logoutTime(rs.email);
-                        });
+                        }
+                      );
                     });
                   } else {
                     return session.save().then((rs) => {
